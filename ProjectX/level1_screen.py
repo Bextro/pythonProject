@@ -1,4 +1,6 @@
 from tkinter import *
+
+
 class Question:
     def __init__(self, question, answers, correctLetter):
         self.question = question
@@ -26,36 +28,27 @@ class Question:
 
     def unpackview(self, view):
         view.pack_forget()
-        askquestionlevel1(b)
+        askquestion1()
 
 
-def askquestionlevel1(b):
-    global questions, window, index, right, number_of_questions
+def askquestion1():
+    global questions, level1_screen, index, level1_button, right, number_of_questions
 
     if len(questions) == index + 1:
-        Label(window, text="Thank you for answering the questions. " + str(right) + " of " + str(
+        Label(level1_screen, text="Thank you for answering the questions. " + str(right) + " of " + str(
             number_of_questions) + " questions answered right").pack()
         return
-    b.pack_forget()
+
     index += 1
-    questions[index].getview(window).pack()
+    questions[index].getview(level1_screen).pack()
 
 
-questions = []
-file = open("level1questions.txt", "r")
-line = file.readline()
-while line != "":
-    questionString = line
-    answers = []
-    for i in range(4):
-        answers.append(file.readline())
 
-    correctLetter = file.readline()
-    correctLetter = correctLetter[:-1]
-    questions.append(Question(questionString, answers, correctLetter))
-    line = file.readline()
-file.close()
-index = -1
-right = 0
-number_of_questions = len(questions)
+def level1():
+    global level1_screen
+    level1_screen = Tk()
+    level1_screen.geometry("600x500")
+    level1_screen.title("Level 1")
+    askquestion1()
 
+    level1_screen.mainloop()

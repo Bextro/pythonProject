@@ -1,85 +1,99 @@
 from tkinter import *
 import os
-# ------------------------------------------------------------------------------------------------------
+from ProjectX.level1_screen import level1
+from ProjectX.level2_screen import level2, Question
 
 
-class Question:
-    def __init__(self, question, answers, correctLetter):
-        self.question = question
-        self.answers = answers
-        self.correctLetter = correctLetter
+def main_login_screen():
+    global main_login_screen, login_button, register_button, log_reg_bet_label, login_up_label, reg_down_label
+    main_login_screen = Tk()
+    main_login_screen.geometry('600x500')
+    main_login_screen.title('Login screen')
+    login_up_label = Label(text="")
+    login_up_label.pack()
+    login_button = Button(text="|LOGIN|", height="2", width="30", command=login)
+    login_button.pack()
+    log_reg_bet_label = Label(text="")
+    log_reg_bet_label.pack()
+    register_button = Button(text="|REGISTER|", height="2", width="30", command=register)
+    register_button.pack()
+    reg_down_label = Label(text="")
+    reg_down_label.pack()
 
-    def check(self, letter, view):
-        global right
-        if letter == self.correctLetter:
-            label = Label(view, text="Right!")
-            right += 1
-        else:
-            label = Label(view, text="Wrong!")
-        label.pack()
-        view.after(1000, lambda *args: self.unpackview(view))
-
-    def getview(self, appwindow):
-        view = Frame(appwindow)
-        Label(view, text=self.question).pack()
-        Button(view, text=self.answers[0], command=lambda *args: self.check("A", view)).pack()
-        Button(view, text=self.answers[1], command=lambda *args: self.check("B", view)).pack()
-        Button(view, text=self.answers[2], command=lambda *args: self.check("C", view)).pack()
-        Button(view, text=self.answers[3], command=lambda *args: self.check("D", view)).pack()
-        return view
-
-    def unpackview(self, view):
-        view.pack_forget()
-        askquestion()
+    main_login_screen.mainloop()
 
 
-def askquestion():
-    global questions, window, index, level2_b, level1_b, right, number_of_questions
+def level_screen():
+    # global level_screen
+    # level_screen = Tk()
+    # level_screen.geometry('600x500')
+    # level_screen.title('Loggedin screen')
+    Label(text="Welcome {} !!!".format(username1), font=("calibri", 28)).pack()
+    # scrollbar = Scrollbar(main_login_screen)
+    # scrollbar.pack(side=RIGHT, fill=Y)
+    back_button = Button(text="|BACK|", height="1", width="15")  # ,command=back_to_main_screen)
+    back_button.pack(anchor="w", side="top")
+    # level_1_button = Button(text="|LEVEL 1|", height="2", width="30", command=lvl1)
+    # level_1_button.pack()
+    Label(text="").pack()
+    level_2_button = Button(text="|LEVEL 2|", height="2", width="30", command=lvl2)
+    level_2_button.pack()
+    Label(text="").pack()
 
-    if len(questions) == index + 1:
-        Label(window, text="Thank you for answering the questions. " + str(right) + " of " + str(
-            number_of_questions) + " questions answered right").pack()
-        return
-    level1_b.pack_forget()
-    level2_b.pack_forget()
-    index += 1
-    questions[index].getview(window).pack()
-def choice(args):
-    file_name = ''
-    if args == 1:
-        file_name = 'level1questions.txt'
-        print('button1')
-        askquestion()
-    elif  args == 2:
-        file_name = 'level2.txt'
-        print('button2')
-        askquestion()
-    else:
-        file_name = 'Error.txt'
 
-questions = []
-file = open(file_name, "r")
-line = file.readline()
-while line != "":
-    questionString = line
-    answers = []
-    for i in range(4):
-        answers.append(file.readline())
+#def lvl1():
+    #main_login_screen.destroy()
+    #read_level_questions('level1questions.txt')
+    #level1()
 
-    correctLetter = file.readline()
-    correctLetter = correctLetter[:-1]
-    questions.append(Question(questionString, answers, correctLetter))
+
+def lvl2():
+    main_login_screen.destroy()
+    #read_level_questions('level2questions.txt')
+    print('questions')
+    questions = []
+    file = open('level2questions.txt', "r")
     line = file.readline()
-file.close()
-index = -1
-right = 0
-number_of_questions = len(questions)
+    while line != "":
+        questionString = line
+        answers = []
+        for i in range(4):
+            answers.append(file.readline())
+
+        correctLetter = file.readline()
+        correctLetter = correctLetter[:-1]
+        questions.append(Question(questionString, answers, correctLetter))
+        line = file.readline()
+    file.close()
+
+    level2(questions)
+
+def read_level_questions(filename):
+    print('questions')
+    questions = []
+    file = open(filename, "r")
+    line = file.readline()
+    while line != "":
+        questionString = line
+        answers = []
+        for i in range(4):
+            answers.append(file.readline())
+
+        correctLetter = file.readline()
+        correctLetter = correctLetter[:-1]
+        questions.append(Question(questionString, answers, correctLetter))
+        line = file.readline()
+    file.close()
 
 
-# ---------------------------------------------------------------------------------------------------------
+# def back_to_main_screen():
+# level_screen.destroy()
+# main_login_screen()
+
+
 def register():
     global register_screen
-    register_screen = Toplevel(main_screen)
+    register_screen = Toplevel(main_login_screen)
     register_screen.title("Register")
     register_screen.geometry("600x500")
 
@@ -157,10 +171,11 @@ def register():
 
 def login():
     global login_screen
-    login_screen = Toplevel(main_screen)
+    login_screen = Toplevel(main_login_screen)
     login_screen.title("Login")
-    login_screen.geometry("300x250")
-    Label(login_screen, text="If you have the login enter the login if u dont have the login press egister button").pack()
+    login_screen.geometry("600x500")
+    Label(login_screen,
+          text="If you have the login enter the login if u dont have the login press register button").pack()
     Label(login_screen, text="").pack()
 
     global username_verify
@@ -207,9 +222,10 @@ def register_user():
     password_entry.delete(0, END)
 
     Label(register_screen, text="Registration Success", fg="green", font=("calibri", 11)).pack()
-
+    register_screen.after(3000, destroy_reg_screen_and_open_log)
 
 def login_verify():
+    global username1
     username1 = username_verify.get()
     password1 = password_verify.get()
     username_login_entry.delete(0, END)
@@ -230,12 +246,14 @@ def login_verify():
 
 
 def login_sucess():
-    global login_success_screen
-    login_success_screen = Toplevel(login_screen)
-    login_success_screen.title("Success")
-    login_success_screen.geometry("150x100")
-    Label(login_success_screen, text="Login Success").pack()
-    Button(login_success_screen, text="OK", command=delete_login_success).pack()
+    login_screen.destroy()
+    register_button.pack_forget()
+    login_button.pack_forget()
+    login_up_label.pack_forget()
+    log_reg_bet_label.pack_forget()
+    reg_down_label.pack_forget()
+    # main_login_screen.destroy()
+    level_screen()
 
 
 def password_not_recognised():
@@ -256,10 +274,6 @@ def user_not_found():
     Button(user_not_found_screen, text="OK", command=delete_user_not_found_screen).pack()
 
 
-def delete_login_success():
-    login_success_screen.destroy()
-
-
 def delete_password_not_recognised():
     password_not_recog_screen.destroy()
 
@@ -267,42 +281,6 @@ def delete_password_not_recognised():
 def delete_user_not_found_screen():
     user_not_found_screen.destroy()
 
-
-# ---------------------------------------------------------------------------------------------------------
-def level_menu():
-    global window,level2_b,level1_b
-    main_screen.destroy()
-    window = Tk()
-    window.geometry('600x400')
-    window.title("Quiz app")
-    level1_b = Button(text="Level 1", height="2", width="30", command=lambda: choice(1))
-    level1_b.pack()
-    Label(text="").pack()
-    level2_b = Button(text="Level 2", height="2", width="30", command=lambda: choice(2))
-    level2_b.pack()
-    Label(text="").pack()
-
-
-
-def main_account_screen():
-    global main_screen
-    main_screen = Tk()
-    main_screen.geometry("300x250")
-    main_screen.title("Quiz app")
-    main_label = Label(text="Want to start ?", bg="green", width="300", height="2", font=("Calibri", 13))
-    main_label.pack()
-    Label(text="").pack()
-    login_button = Button(text="|LOGIN|", height="2", width="30", command=login)
-    login_button.pack()
-    Label(text="").pack()
-    register_button = Button(text="|REGISTER|", height="2", width="30", command=register)
-    register_button.pack()
-    Label(text="").pack()
-    start_button = Button(text="|START|", height="2", width="30", command=level_menu)
-    start_button.pack()
-    Label(text="").pack()
-
-    main_screen.mainloop()
-
-
-main_account_screen()
+def destroy_reg_screen_and_open_log():
+    register_screen.destroy()
+    login()
